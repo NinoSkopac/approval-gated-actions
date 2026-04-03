@@ -1,0 +1,17 @@
+{
+  "name": "approval-gated-actions",
+  "private": true,
+  "packageManager": "pnpm@10.29.1",
+  "scripts": {
+    "dev:broker": "pnpm --filter @approval-gated-actions/broker-api dev",
+    "seed:broker": "pnpm --filter @approval-gated-actions/broker-api seed:demo",
+    "test": "vitest run --config vitest.config.ts",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
