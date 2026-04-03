@@ -6,11 +6,8 @@ This repository is a pnpm TypeScript monorepo for an agent action governance sys
 
 - `packages/core`: shared action kinds, proposal types, payload normalization, hashing, expiry helpers, and deterministic state transitions
 - `apps/broker-api`: Fastify REST API with Zod validation, SQLite persistence, auditable state transitions, and health/list/query endpoints
+- `packages/openclaw-adapter`: thin proposing adapter that normalizes email-action input, hashes payloads, and creates broker proposals
 - `packages/executor-gmail-web`: Playwright-based privileged Gmail web executor that consumes approved broker proposals and uses Gmail’s native send/schedule UI
-
-Scaffolded but intentionally not yet implemented end to end:
-
-- `packages/openclaw-adapter`
 
 ## Workspace layout
 

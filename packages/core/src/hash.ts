@@ -2,7 +2,11 @@ import { createHash } from "node:crypto";
 
 import type { ActionKind, ActionPayloadByKind, JsonObject, JsonValue } from "./types";
 
-function stableSerialize(value: JsonValue): string {
+function stableSerialize(value: JsonValue | undefined): string {
+  if (value === undefined) {
+    return "null";
+  }
+
   if (value === null) {
     return "null";
   }
@@ -19,16 +23,18 @@ function stableSerialize(value: JsonValue): string {
       return JSON.stringify(value);
     default: {
       const objectValue = value as JsonObject;
-      const keys = Object.keys(objectValue).sort();
+      const keys = Object.keys(objectValue)
+        .filter((key) => objectValue[key] !== undefined)
+        .sort();
       const entries = keys.map(
-        (key) => `${JSON.stringify(key)}:${stableSerialize(objectValue[key] as JsonValue)}`
+        (key) => `${JSON.stringify(key)}:${stableSerialize(objectValue[key])}`
       );
       return `{${entries.join(",")}}`;
     }
   }
 }
 
-export function stableStringify(value: JsonValue): string {
+export function stableStringify(value: JsonValue | undefined): string {
   return stableSerialize(value);
 }
 

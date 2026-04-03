@@ -1,9 +1,5 @@
-export interface OpenClawAdapterPlaceholder {
-  implemented: false;
-  nextStep: "normalize agent input and submit proposals to broker";
-}
-
-export const openClawAdapterPlaceholder: OpenClawAdapterPlaceholder = {
-  implemented: false,
-  nextStep: "normalize agent input and submit proposals to broker"
-};
+export * from "./types";
+export * from "./schemas";
+export * from "./normalize";
+export * from "./client";
+export * from "./tool-wrapper";

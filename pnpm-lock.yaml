@@ -56,6 +56,9 @@ importers:
       '@approval-gated-actions/core':
         specifier: workspace:*
         version: link:../core
+      zod:
+        specifier: ^4.1.5
+        version: 4.3.6
 
 packages:
 
