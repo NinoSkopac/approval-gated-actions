@@ -5,3 +5,4 @@ coverage
 *.sqlite-shm
 *.sqlite-wal
 apps/broker-api/data
+packages/executor-gmail-web/data

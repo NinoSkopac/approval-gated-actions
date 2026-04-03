@@ -6,11 +6,11 @@ This repository is a pnpm TypeScript monorepo for an agent action governance sys
 
 - `packages/core`: shared action kinds, proposal types, payload normalization, hashing, expiry helpers, and deterministic state transitions
 - `apps/broker-api`: Fastify REST API with Zod validation, SQLite persistence, auditable state transitions, and health/list/query endpoints
+- `packages/executor-gmail-web`: Playwright-based privileged Gmail web executor that consumes approved broker proposals and uses Gmail’s native send/schedule UI
 
 Scaffolded but intentionally not yet implemented end to end:
 
 - `packages/openclaw-adapter`
-- `packages/executor-gmail-web`
 
 ## Workspace layout
 
@@ -43,6 +43,15 @@ pnpm dev:broker
 ```
 
 The broker stores data in `apps/broker-api/data/broker.sqlite` by default.
+
+## Run the Gmail web executor
+
+```bash
+pnpm --filter @approval-gated-actions/executor-gmail-web login
+pnpm --filter @approval-gated-actions/executor-gmail-web run:once
+```
+
+See [packages/executor-gmail-web/README.md](/Users/onin/dev/approval-gated-actions/packages/executor-gmail-web/README.md) for Playwright, browser-profile, and manual Gmail setup details.
 
 ## Seed demo data
 

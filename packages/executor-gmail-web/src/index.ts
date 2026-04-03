@@ -1,9 +1,8 @@
-export interface GmailWebExecutorPlaceholder {
-  implemented: false;
-  nextStep: "consume approved broker proposals and drive Gmail web";
-}
-
-export const gmailWebExecutorPlaceholder: GmailWebExecutorPlaceholder = {
-  implemented: false,
-  nextStep: "consume approved broker proposals and drive Gmail web"
-};
+export * from "./types";
+export * from "./config";
+export * from "./selectors";
+export * from "./mapping";
+export * from "./broker-client";
+export * from "./executor";
+export * from "./playwright-gmail-automation";
+export * from "./logger";
