@@ -1,30 +1,39 @@
 import { BrokerTransitionConflictError } from "./broker-client";
 import { buildComposeRequest } from "./mapping";
+import { GmailBrowserExecutionFlow } from "./gmail-browser-flow";
 import type {
   BrokerClientLike,
   ExecutableGmailProposal,
   ExecutorFailureDetails,
   ExecutorLogger,
   ExecutorRunSummary,
-  GmailAutomationBackend
+  GmailBrowserBackend
 } from "./types";
 
 export interface GmailExecutorOptions {
   brokerClient: BrokerClientLike;
-  backend: GmailAutomationBackend;
+  browserBackend: GmailBrowserBackend;
+  flow?: GmailBrowserExecutionFlow;
   logger: ExecutorLogger;
 }
 
 export class GmailWebExecutor {
   private readonly brokerClient: BrokerClientLike;
 
-  private readonly backend: GmailAutomationBackend;
+  private readonly browserBackend: GmailBrowserBackend;
+
+  private readonly flow: GmailBrowserExecutionFlow;
 
   private readonly logger: ExecutorLogger;
 
   public constructor(options: GmailExecutorOptions) {
     this.brokerClient = options.brokerClient;
-    this.backend = options.backend;
+    this.browserBackend = options.browserBackend;
+    this.flow =
+      options.flow ??
+      new GmailBrowserExecutionFlow({
+        logger: options.logger
+      });
     this.logger = options.logger;
   }
 
@@ -77,12 +86,16 @@ export class GmailWebExecutor {
 
     try {
       const composeRequest = buildComposeRequest(proposal);
-      const executionResult = await this.backend.execute(composeRequest);
+      const executionResult = await this.flow.execute(
+        this.browserBackend,
+        composeRequest
+      );
       await this.brokerClient.markExecuted(proposal.id, executionResult);
       this.logger.info("Proposal executed successfully.", {
         proposalId: proposal.id,
         kind: proposal.kind,
-        verification: executionResult.verification
+        verification: executionResult.verification,
+        browserBackend: this.browserBackend.kind
       });
       return "succeeded";
     } catch (error) {

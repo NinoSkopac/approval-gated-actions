@@ -2,12 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 
 import { BrokerTransitionConflictError } from "../src/broker-client";
 import { GmailWebExecutor } from "../src/executor";
+import { GmailBrowserExecutionFlow } from "../src/gmail-browser-flow";
 import type {
   BrokerClientLike,
   ExecutableGmailProposal,
   ExecutorFailureDetails,
-  GmailAutomationBackend,
-  GmailAutomationExecutionResult
+  GmailBrowserBackend,
+  GmailBrowserExecutionResult
 } from "../src/types";
 
 function createProposal(kind: ExecutableGmailProposal["kind"]): ExecutableGmailProposal {
@@ -71,16 +72,21 @@ describe("GmailWebExecutor", () => {
       markExecuted,
       markFailed: vi.fn().mockResolvedValue()
     };
-    const backend: GmailAutomationBackend = {
-      prepareSession: vi.fn().mockResolvedValue(),
+    const flow = {
       execute: vi.fn().mockResolvedValue({
         verification: "toast",
         externalId: null
-      } satisfies GmailAutomationExecutionResult)
+      } satisfies GmailBrowserExecutionResult)
+    } as unknown as GmailBrowserExecutionFlow;
+    const browserBackend: GmailBrowserBackend = {
+      kind: "playwright",
+      displayName: "Test Backend",
+      openSession: vi.fn()
     };
     const executor = new GmailWebExecutor({
       brokerClient,
-      backend,
+      browserBackend,
+      flow,
       logger: createLogger()
     });
 
@@ -105,13 +111,18 @@ describe("GmailWebExecutor", () => {
       markExecuted: vi.fn().mockResolvedValue(),
       markFailed
     };
-    const backend: GmailAutomationBackend = {
-      prepareSession: vi.fn().mockResolvedValue(),
+    const flow = {
       execute: vi.fn().mockRejectedValue(new Error("Gmail toast not found"))
+    } as unknown as GmailBrowserExecutionFlow;
+    const browserBackend: GmailBrowserBackend = {
+      kind: "playwright",
+      displayName: "Test Backend",
+      openSession: vi.fn()
     };
     const executor = new GmailWebExecutor({
       brokerClient,
-      backend,
+      browserBackend,
+      flow,
       logger: createLogger()
     });
 
@@ -137,21 +148,26 @@ describe("GmailWebExecutor", () => {
       markExecuted: vi.fn().mockResolvedValue(),
       markFailed: vi.fn().mockResolvedValue()
     };
-    const backend: GmailAutomationBackend = {
-      prepareSession: vi.fn().mockResolvedValue(),
+    const flow = {
       execute: vi.fn().mockResolvedValue({
         verification: "toast"
-      } satisfies GmailAutomationExecutionResult)
+      } satisfies GmailBrowserExecutionResult)
+    } as unknown as GmailBrowserExecutionFlow;
+    const browserBackend: GmailBrowserBackend = {
+      kind: "playwright",
+      displayName: "Test Backend",
+      openSession: vi.fn()
     };
     const executor = new GmailWebExecutor({
       brokerClient,
-      backend,
+      browserBackend,
+      flow,
       logger: createLogger()
     });
 
     const summary = await executor.runOnce();
 
     expect(summary.skipped).toBe(1);
-    expect(backend.execute).not.toHaveBeenCalled();
+    expect(flow.execute).not.toHaveBeenCalled();
   });
 });

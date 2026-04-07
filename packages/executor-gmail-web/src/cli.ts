@@ -1,8 +1,9 @@
+import { createGmailBrowserBackend } from "./backend-factory";
 import { BrokerClient } from "./broker-client";
 import { parseExecutorConfig } from "./config";
 import { GmailWebExecutor } from "./executor";
+import { GmailBrowserExecutionFlow } from "./gmail-browser-flow";
 import { createExecutorLogger } from "./logger";
-import { PlaywrightGmailAutomation } from "./playwright-gmail-automation";
 import { defaultGmailSelectors } from "./selectors";
 
 async function main(): Promise<void> {
@@ -18,27 +19,30 @@ async function main(): Promise<void> {
     baseUrl: config.brokerBaseUrl,
     actor
   });
-  const backend = new PlaywrightGmailAutomation({
+  const browserBackend = createGmailBrowserBackend(
     config,
     logger,
-    selectors: defaultGmailSelectors
-  });
+    defaultGmailSelectors
+  );
+  const flow = new GmailBrowserExecutionFlow({ logger });
   const executor = new GmailWebExecutor({
     brokerClient,
-    backend,
+    browserBackend,
+    flow,
     logger
   });
 
-  logger.info("Starting Gmail web executor command.", {
+  logger.info("Starting Gmail browser executor command.", {
     command,
     brokerBaseUrl: config.brokerBaseUrl,
+    browserBackend: config.browserBackend,
     browserUserDataDir: config.browserUserDataDir,
     browserChannel: config.browserChannel,
     headless: config.headless
   });
 
   if (command === "login") {
-    await backend.prepareSession();
+    await flow.prepareSession(browserBackend);
     return;
   }
 

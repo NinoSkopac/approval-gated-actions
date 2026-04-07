@@ -82,7 +82,7 @@ It must support:
 
 ## First vertical
 
-OpenClaw adapter + broker + Gmail web executor.
+OpenClaw adapter + broker + Gmail browser executor.
 
 Why:
 - outbound email is trust-sensitive
@@ -125,8 +125,21 @@ Privileged executor:
 - consumes approved proposals
 - opens Gmail web
 - composes the message
-- sends now or schedules natively
+- schedules natively through Gmail web
+- may support browser-based send-now as a fallback path
 - writes execution result back to broker
+
+Preferred personal-deployment path:
+- Gmail API for draft creation
+- Gmail API for non-native send-now where acceptable
+- OpenClaw-controlled Chrome session for native Gmail schedule-send
+- Playwright only as an optional/reference backend
+- no bulk sending, spam, service-limit bypass, or misleading automation
+
+Trademark posture:
+- This project is not affiliated with, endorsed by, or sponsored by Google or Gmail.
+- Gmail and Google are referenced only to describe interoperability with user-approved workflows.
+- Public diagrams should avoid Gmail logos/icons unless reviewed against Google brand guidance.
 
 ## Trust boundaries
 
@@ -165,6 +178,11 @@ Initial action kinds:
 The first executor may only implement:
 - `gmail.web.send_now`
 - `gmail.web.schedule_send`
+
+For personal deployment, prefer:
+- `gmail.api.create_draft`
+- a future Gmail API-backed send-now path
+- Gmail web only when native schedule-send behavior is required
 
 The core must remain generic enough for future kinds like:
 - `slack.post_message`
@@ -237,5 +255,5 @@ This project is the missing layer between agent intent and real-world execution.
 It is not an email popup.
 It is a reusable governance system for agent actions.
 
-Gmail is the first executor.
+Gmail is the first executor family.
 The product is bigger than Gmail.

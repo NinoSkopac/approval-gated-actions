@@ -36,7 +36,7 @@ describe("broker api", () => {
           subject: "Follow up",
           text: "Checking in.",
           schedule: {
-            sendAt: "2026-04-05T09:00:00-04:00",
+            sendAt: "2099-04-05T09:00:00-04:00",
             timezone: "America/New_York"
           }
         },
@@ -44,7 +44,7 @@ describe("broker api", () => {
           type: "agent",
           id: "openclaw"
         },
-        expiresAt: "2026-04-05T12:00:00-04:00"
+        expiresAt: "2099-04-05T12:00:00-04:00"
       }
     });
 

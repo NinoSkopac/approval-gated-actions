@@ -1,6 +1,8 @@
 node_modules
 dist
 coverage
+.codex
+.idea
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal

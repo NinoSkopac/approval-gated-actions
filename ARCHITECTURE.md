@@ -9,7 +9,7 @@ It sits between:
 - a human who approves, edits, or rejects them
 - a privileged executor that performs the real-world side effect
 
-The first concrete flow is Gmail web send/schedule.
+The first concrete flow is Gmail send/draft plus Gmail-native schedule-send.
 The architecture must remain generic for future executors.
 
 ## Core principle
@@ -83,9 +83,10 @@ Privileged side-effect executor.
 Responsibilities:
 - fetch approved Gmail proposals from broker
 - mark them `executing`
-- open Gmail web
-- compose the message
-- send immediately or schedule through Gmail’s native UI
+- run a generic Gmail browser execution flow through a pluggable browser backend
+- support Gmail web compose/send/schedule operations behind that backend
+- prefer OpenClaw-controlled Chrome for personal deployment
+- keep Playwright as an optional/reference backend
 - verify success as best as practical
 - write back `executed` or `failed`
 
@@ -93,7 +94,7 @@ This package is Gmail-specific.
 Its interface should still fit a generic executor model.
 
 ## Trust boundaries
-
+![trust-boundaries.png](assets/trust-boundaries.png)
 ### Agent / adapter boundary
 
 The agent may decide what to propose.
@@ -231,9 +232,17 @@ Initial action kinds:
 - `gmail.web.schedule_send`
 - `gmail.api.create_draft`
 
-The first executor may only implement:
+The current browser executor may implement:
 - `gmail.web.send_now`
 - `gmail.web.schedule_send`
+
+Preferred personal-deployment path:
+- `gmail.api.create_draft` through a Gmail API executor path
+- future Gmail API-backed send-now path when native Gmail web send is unnecessary
+- browser execution only when native Gmail schedule-send behavior is required
+- OpenClaw-controlled Chrome session as the preferred real-account browser backend
+- Playwright as an optional/reference backend
+- no bulk sending, spam, service-limit bypass, or misleading automation
 
 The core model should make it easy to add future kinds such as:
 - `slack.post_message`
@@ -243,10 +252,13 @@ The core model should make it easy to add future kinds such as:
 
 ## Gmail-specific design notes
 
-### Why Gmail web executor exists
+### Why Gmail browser executor exists
 
 For scheduled email, the goal is native Gmail behavior.
 That means the executor should use Gmail web’s scheduling flow so the message lands in Gmail Scheduled.
+
+The browser control mechanism should be pluggable.
+For personal deployment, the preferred mechanism is an OpenClaw-controlled real Chrome session/profile rather than Playwright against a real Gmail account.
 
 ### Why not schedule in broker
 
@@ -293,9 +305,13 @@ The broker is the rendezvous point.
 
 - Keep privileged Gmail session material outside the adapter.
 - Use a dedicated browser profile for Gmail automation.
+- Prefer OpenClaw-controlled Chrome for personal real-account browser execution.
+- Treat Playwright as an optional/reference backend rather than the only architecture.
 - Treat executor machines/profiles as privileged infrastructure.
 - Treat approval surfaces as operator/admin surfaces.
 - Never assume proposal payloads are safe without validation.
+- Do not imply Google or Gmail affiliation, endorsement, or sponsorship.
+- Avoid Gmail logos/icons in public diagrams unless reviewed against Google brand guidance.
 
 ## MVP boundaries
 
@@ -305,7 +321,7 @@ The broker is the rendezvous point.
 - proposal creation
 - approve / edit / reject / expiry
 - audit log
-- Gmail web executor
+- Gmail browser executor with pluggable backend
 - OpenClaw-facing adapter
 
 ### Excluded from MVP
@@ -323,8 +339,8 @@ The broker is the rendezvous point.
 3. Broker stores proposal with scheduled time and timezone.
 4. Human reviews and approves.
 5. Gmail executor picks up the proposal.
-6. Executor composes email in Gmail web.
-7. Executor uses Gmail’s native schedule-send UI.
+6. Executor runs the generic Gmail browser flow through its configured backend.
+7. Backend drives Gmail’s native schedule-send UI.
 8. Executor reports success back to broker.
 9. Broker stores execution result and audit trail.
 
@@ -348,6 +364,8 @@ This architecture should support future additions without redesign:
 - more policy metadata
 - multi-step approvals
 - OpenClaw-specific integration improvements
+- Gmail API execution path for draft and send-now
+- OpenClaw Chrome-session browser backend implementation
 - support for other agent runtimes besides OpenClaw
 
 ## Summary

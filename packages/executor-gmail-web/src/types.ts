@@ -28,15 +28,35 @@ export interface GmailComposeRequest {
   };
 }
 
-export interface GmailAutomationExecutionResult {
+export type GmailBrowserBackendKind = "openclaw" | "playwright";
+
+export interface GmailBrowserConfirmation {
+  verification: "toast" | "url" | "dialog";
+  message: string;
+  details?: JsonObject | null;
+}
+
+export interface GmailBrowserExecutionResult {
   verification: "toast" | "url" | "dialog";
   externalId?: string | null;
   details?: JsonObject | null;
 }
 
-export interface GmailAutomationBackend {
-  prepareSession(): Promise<void>;
-  execute(request: GmailComposeRequest): Promise<GmailAutomationExecutionResult>;
+export interface GmailBrowserSession {
+  ensureInboxReady(): Promise<void>;
+  openCompose(request: GmailComposeRequest): Promise<void>;
+  submitSendNow(): Promise<void>;
+  openScheduleSendDialog(): Promise<void>;
+  applySchedule(schedule: { sendAt: string; timezone: string }): Promise<void>;
+  confirmScheduleSend(): Promise<void>;
+  readConfirmation(expectedFragments: string[]): Promise<GmailBrowserConfirmation>;
+  close(): Promise<void>;
+}
+
+export interface GmailBrowserBackend {
+  kind: GmailBrowserBackendKind;
+  displayName: string;
+  openSession(options?: { timezoneId?: string }): Promise<GmailBrowserSession>;
 }
 
 export interface BrokerClientLike {
@@ -44,7 +64,7 @@ export interface BrokerClientLike {
   markExecuting(proposalId: string): Promise<void>;
   markExecuted(
     proposalId: string,
-    result: GmailAutomationExecutionResult
+    result: GmailBrowserExecutionResult
   ): Promise<void>;
   markFailed(proposalId: string, error: ExecutorFailureDetails): Promise<void>;
 }

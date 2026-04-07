@@ -15,8 +15,11 @@ const booleanishSchema = z
 
 const configSchema = z.object({
   brokerBaseUrl: z.string().url(),
+  browserBackend: z.enum(["openclaw", "playwright"]).default("openclaw"),
   browserUserDataDir: z.string().trim().min(1),
   browserChannel: z.enum(["chrome", "msedge", "chromium"]).default("chrome"),
+  openClawSessionId: z.string().trim().min(1).optional(),
+  openClawChromeProfileName: z.string().trim().min(1).optional(),
   headless: booleanishSchema.default(false),
   pollIntervalMs: z.coerce.number().int().positive().default(10000),
   actorId: z.string().trim().min(1).default("gmail-web-executor"),
@@ -35,10 +38,13 @@ export function parseExecutorConfig(
 ): ExecutorConfig {
   return configSchema.parse({
     brokerBaseUrl: env.BROKER_BASE_URL ?? "http://127.0.0.1:3000",
+    browserBackend: env.GMAIL_EXECUTOR_BROWSER_BACKEND ?? "openclaw",
     browserUserDataDir:
       env.GMAIL_EXECUTOR_USER_DATA_DIR ??
       resolve(cwd, "packages/executor-gmail-web/data/chromium-profile"),
     browserChannel: env.GMAIL_EXECUTOR_BROWSER_CHANNEL ?? "chrome",
+    openClawSessionId: env.GMAIL_EXECUTOR_OPENCLAW_SESSION_ID,
+    openClawChromeProfileName: env.GMAIL_EXECUTOR_OPENCLAW_CHROME_PROFILE_NAME,
     headless: env.GMAIL_EXECUTOR_HEADLESS ?? false,
     pollIntervalMs: env.GMAIL_EXECUTOR_POLL_INTERVAL_MS ?? 10000,
     actorId: env.GMAIL_EXECUTOR_ACTOR_ID ?? "gmail-web-executor",

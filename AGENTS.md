@@ -27,6 +27,9 @@ Implement and maintain these packages/apps:
 - Do not collapse broker, adapter, and executor into one service.
 - Do not implement a fake backend timer scheduler for Gmail scheduled send in MVP.
 - For scheduled email, use Gmail web’s native scheduling flow so messages land in Gmail Scheduled.
+- Browser execution must remain pluggable. Playwright is optional/reference; OpenClaw-controlled Chrome is the preferred personal-deployment path.
+- Do not imply Google or Gmail affiliation, endorsement, or sponsorship.
+- Public diagrams should avoid Gmail logos/icons unless reviewed against Google brand guidance.
 
 ## Product rules
 
@@ -70,6 +73,8 @@ Implement and maintain these packages/apps:
 - Log clearly enough for manual debugging.
 - Make browser automation selectors/configuration easy to update.
 - Keep provider-specific automation behind a clean interface.
+- Keep browser backend details behind a backend abstraction so executor flow does not depend directly on Playwright concepts.
+- Do not build or document bulk sending, spam, service-limit bypass, or misleading automation paths.
 
 ## Testing requirements
 

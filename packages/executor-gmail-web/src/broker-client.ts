@@ -12,7 +12,7 @@ import type {
   BrokerClientLike,
   ExecutableGmailProposal,
   ExecutorFailureDetails,
-  GmailAutomationExecutionResult
+  GmailBrowserExecutionResult
 } from "./types";
 
 const listResponseSchema = z
@@ -80,7 +80,7 @@ export class BrokerClient implements BrokerClientLike {
 
   public async markExecuted(
     proposalId: string,
-    result: GmailAutomationExecutionResult
+    result: GmailBrowserExecutionResult
   ): Promise<void> {
     await this.postJson(`/proposals/${proposalId}/executed`, {
       actor: this.actor,

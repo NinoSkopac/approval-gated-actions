@@ -87,12 +87,12 @@ const result = await tool.invoke({
 3. Adapter sends the proposal to `apps/broker-api`.
 4. Broker stores proposal and audit trail.
 5. Human approves or rejects.
-6. `packages/executor-gmail-web` consumes approved proposals and drives Gmail web.
+6. `packages/executor-gmail-web` consumes approved proposals and uses the configured browser backend only when native Gmail schedule-send behavior is required.
 
 ## Examples
 
-- Direct client call: [direct-call.ts](/Users/onin/dev/approval-gated-actions/packages/openclaw-adapter/examples/direct-call.ts)
-- Minimal HTTP tool server: [tool-server.ts](/Users/onin/dev/approval-gated-actions/packages/openclaw-adapter/examples/tool-server.ts)
+- Direct client call: [direct-call.ts](examples/direct-call.ts)
+- Minimal HTTP tool server: [tool-server.ts](examples/tool-server.ts)
 
 Run them with:
 
