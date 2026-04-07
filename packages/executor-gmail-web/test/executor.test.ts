@@ -170,4 +170,41 @@ describe("GmailWebExecutor", () => {
     expect(summary.skipped).toBe(1);
     expect(flow.execute).not.toHaveBeenCalled();
   });
+
+  it("limits proposals per run by default", async () => {
+    const brokerClient: BrokerClientLike = {
+      fetchApprovedExecutableProposals: vi.fn().mockResolvedValue([
+        createProposal("gmail.web.send_now"),
+        { ...createProposal("gmail.web.send_now"), id: "second-proposal" }
+      ]),
+      markExecuting: vi.fn().mockResolvedValue(),
+      markExecuted: vi.fn().mockResolvedValue(),
+      markFailed: vi.fn().mockResolvedValue()
+    };
+    const flow = {
+      execute: vi.fn().mockResolvedValue({
+        verification: "toast"
+      } satisfies GmailBrowserExecutionResult)
+    } as unknown as GmailBrowserExecutionFlow;
+    const browserBackend: GmailBrowserBackend = {
+      kind: "playwright",
+      displayName: "Test Backend",
+      openSession: vi.fn()
+    };
+    const executor = new GmailWebExecutor({
+      brokerClient,
+      browserBackend,
+      flow,
+      logger: createLogger()
+    });
+
+    const summary = await executor.runOnce();
+
+    expect(summary).toMatchObject({
+      processed: 1,
+      succeeded: 1,
+      skipped: 1
+    });
+    expect(flow.execute).toHaveBeenCalledTimes(1);
+  });
 });

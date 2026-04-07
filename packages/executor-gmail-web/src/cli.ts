@@ -29,7 +29,8 @@ async function main(): Promise<void> {
     brokerClient,
     browserBackend,
     flow,
-    logger
+    logger,
+    maxProposalsPerRun: config.maxProposalsPerRun
   });
 
   logger.info("Starting Gmail browser executor command.", {
@@ -38,7 +39,8 @@ async function main(): Promise<void> {
     browserBackend: config.browserBackend,
     browserUserDataDir: config.browserUserDataDir,
     browserChannel: config.browserChannel,
-    headless: config.headless
+    headless: config.headless,
+    maxProposalsPerRun: config.maxProposalsPerRun
   });
 
   if (command === "login") {

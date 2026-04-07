@@ -59,10 +59,13 @@ For personal real Gmail usage:
 - use browser execution only when native Gmail schedule-send behavior is required
 - prefer an OpenClaw-controlled Chrome session/profile for that browser execution path
 - do not use this project for bulk sending, spam, bypassing service limits, or misleading automation
+- browser execution defaults to one proposal per run to reduce accidental bulk-like behavior
 
 ## Trademark and Affiliation
 
 This project is not affiliated with, endorsed by, or sponsored by Google or Gmail. Gmail and Google are trademarks of Google LLC. Product names are used only to describe interoperability with user-approved workflows.
+
+See [USAGE_POLICY.md](USAGE_POLICY.md) for explicit acceptable-use guidance.
 
 ## Seed demo data
 

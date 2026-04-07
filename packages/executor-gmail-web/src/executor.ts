@@ -15,6 +15,7 @@ export interface GmailExecutorOptions {
   browserBackend: GmailBrowserBackend;
   flow?: GmailBrowserExecutionFlow;
   logger: ExecutorLogger;
+  maxProposalsPerRun?: number;
 }
 
 export class GmailWebExecutor {
@@ -26,6 +27,8 @@ export class GmailWebExecutor {
 
   private readonly logger: ExecutorLogger;
 
+  private readonly maxProposalsPerRun: number;
+
   public constructor(options: GmailExecutorOptions) {
     this.brokerClient = options.brokerClient;
     this.browserBackend = options.browserBackend;
@@ -35,18 +38,27 @@ export class GmailWebExecutor {
         logger: options.logger
       });
     this.logger = options.logger;
+    this.maxProposalsPerRun = options.maxProposalsPerRun ?? 1;
   }
 
   public async runOnce(): Promise<ExecutorRunSummary> {
     const proposals = await this.brokerClient.fetchApprovedExecutableProposals();
+    const proposalsToProcess = proposals.slice(0, this.maxProposalsPerRun);
     const summary: ExecutorRunSummary = {
       processed: 0,
       succeeded: 0,
       failed: 0,
-      skipped: 0
+      skipped: proposals.length - proposalsToProcess.length
     };
 
-    for (const proposal of proposals) {
+    if (summary.skipped > 0) {
+      this.logger.warn("Run limit reached; leaving remaining proposals approved for later runs.", {
+        maxProposalsPerRun: this.maxProposalsPerRun,
+        skipped: summary.skipped
+      });
+    }
+
+    for (const proposal of proposalsToProcess) {
       const result = await this.processProposal(proposal);
       summary.processed += 1;
       summary[result] += 1;

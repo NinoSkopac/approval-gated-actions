@@ -13,6 +13,7 @@ describe("parseExecutorConfig", () => {
     );
     expect(config.browserChannel).toBe("chrome");
     expect(config.headless).toBe(false);
+    expect(config.maxProposalsPerRun).toBe(1);
   });
 
   it("parses custom environment overrides", () => {
@@ -23,7 +24,8 @@ describe("parseExecutorConfig", () => {
       GMAIL_EXECUTOR_BROWSER_CHANNEL: "chromium",
       GMAIL_EXECUTOR_OPENCLAW_SESSION_ID: "session-123",
       GMAIL_EXECUTOR_HEADLESS: "true",
-      GMAIL_EXECUTOR_POLL_INTERVAL_MS: "2500"
+      GMAIL_EXECUTOR_POLL_INTERVAL_MS: "2500",
+      GMAIL_EXECUTOR_MAX_PROPOSALS_PER_RUN: "3"
     });
 
     expect(config.brokerBaseUrl).toBe("http://broker.internal:9999");
@@ -33,5 +35,6 @@ describe("parseExecutorConfig", () => {
     expect(config.openClawSessionId).toBe("session-123");
     expect(config.headless).toBe(true);
     expect(config.pollIntervalMs).toBe(2500);
+    expect(config.maxProposalsPerRun).toBe(3);
   });
 });

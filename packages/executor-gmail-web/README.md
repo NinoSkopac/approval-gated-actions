@@ -97,6 +97,8 @@ pnpm --filter @approval-gated-actions/executor-gmail-web run:poll
 - `GMAIL_EXECUTOR_OPENCLAW_CHROME_PROFILE_NAME`
 - `GMAIL_EXECUTOR_HEADLESS`
 - `GMAIL_EXECUTOR_POLL_INTERVAL_MS`
+- `GMAIL_EXECUTOR_MAX_PROPOSALS_PER_RUN`
+  Defaults to `1`; maximum `10`.
 - `GMAIL_EXECUTOR_ACTOR_ID`
 - `GMAIL_EXECUTOR_ACTOR_DISPLAY_NAME`
 - `GMAIL_EXECUTOR_GMAIL_BASE_URL`
@@ -149,6 +151,7 @@ Reference implementation:
 - Rich HTML body insertion is best-effort because Gmail’s compose editor is a dynamic contenteditable surface.
 - Success verification is toast-based; Gmail does not expose a stable message ID in the compose flow here.
 - Public docs and diagrams should avoid Gmail logos/icons unless reviewed against Google brand guidance.
+- Browser execution defaults to one proposal per run to reduce accidental bulk-like behavior.
 
 ## What still requires manual setup
 
